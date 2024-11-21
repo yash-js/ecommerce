@@ -153,3 +153,11 @@ export const refreshToken = async (req, res) => {
     res.status(401).json({ message: "Unauthorized", error: error.message });
   }
 };
+
+export const getProfile = async (req, res) => {
+  try {
+    res.json(req.user);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
