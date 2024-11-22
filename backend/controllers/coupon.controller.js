@@ -8,7 +8,7 @@ export const getCoupon = async (req, res) => {
     });
     res, json(coupon || null);
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({  error: error.message });
   }
 };
 
@@ -22,13 +22,13 @@ export const validateCoupon = async (req, res) => {
     });
 
     if (!coupon) {
-      return res.status(400).json({ message: "Invalid coupon code" });
+      return res.status(400).json({ error: "Invalid coupon code" });
     }
 
     if (coupon.expirationDate < new Date()) {
       coupon.isActive = false;
       await coupon.save();
-      return res.status(400).json({ message: "Coupon expired" });
+      return res.status(400).json({ error: "Coupon expired" });
     }
 
     res.json({
@@ -37,6 +37,6 @@ export const validateCoupon = async (req, res) => {
       discountPercentage: coupon.discountPercentage,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({  error: error.message });
   }
 };

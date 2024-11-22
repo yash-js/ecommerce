@@ -14,7 +14,7 @@ export const getCartProducts = async (req, res) => {
     });
     res.json(cartItems);
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({  error: error.message });
   }
 };
 
@@ -36,7 +36,7 @@ export const addToCart = async (req, res) => {
 
     res.json(user.cartItems);
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({  error: error.message });
   }
 };
 
@@ -54,7 +54,7 @@ export const removeAllFromCart = async (req, res) => {
     await user.save();
     res.json(user.cartItems);
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({  error: error.message });
   }
 };
 
@@ -79,9 +79,9 @@ export const updateQuantity = async (req, res) => {
       await user.save();
       return res.json(user.cartItems);
     } else {
-      res.status(404).json({ message: "Product not found" });
+      res.status(404).json({ error: "Product not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({  error: error.message });
   }
 };

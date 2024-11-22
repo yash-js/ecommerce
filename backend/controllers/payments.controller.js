@@ -6,7 +6,7 @@ export const createCheckoutSession = async (req, res) => {
     const { products, couponCode } = req.body;
 
     if (!Array.isArray(products) || products.length === 0) {
-      return res.status(400).json({ message: "Invalid products" });
+      return res.status(400).json({ error: "Invalid products" });
     }
 
     let totalAmount = 0;
@@ -75,7 +75,7 @@ export const createCheckoutSession = async (req, res) => {
 
     res.json({ id: session.id, amount: totalAmount / 100 });
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({  error: error.message });
   }
 };
 
@@ -115,7 +115,7 @@ export const checkoutSuccess = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({  error: error.message });
   }
 };
 
