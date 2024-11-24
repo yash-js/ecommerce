@@ -119,19 +119,24 @@ export const toggleFeaturedProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
 
-    if (product) {
-      product.isFeatured = !product.isFeatured;
-      const updatedProduct = await product.save(); // Save the updatedProduct
-      await updateFeaturedProductsCache();
-      res.json(updatedProduct);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
 
-    return res.status(404).json({ message: "Product not found" });
+    
+    product.isFeatured = !product.isFeatured;
+    const updatedProduct = await product.save(); 
+    await updateFeaturedProductsCache();
 
+    res.json(updatedProduct);
   } catch (error) {
+    console.log("YASH", error);
+
+    // Send a single error response
     res.status(500).json({ error: error.message });
   }
 };
+
 
 async function updateFeaturedProductsCache() {
   try {

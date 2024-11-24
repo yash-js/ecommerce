@@ -40,7 +40,7 @@ const getAnalyticsData = async () => {
 
   return {
     users: totalUsers,
-    products: totalProductss,
+    products: totalProducts,
     totalSales,
     totalRevenue,
   };

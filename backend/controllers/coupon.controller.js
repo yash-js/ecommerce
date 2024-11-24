@@ -6,7 +6,7 @@ export const getCoupon = async (req, res) => {
       userId: req.user._id,
       isActive: true,
     });
-    res, json(coupon || null);
+    res.json(coupon || null);
   } catch (error) {
     res.status(500).json({  error: error.message });
   }

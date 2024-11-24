@@ -24,6 +24,7 @@ export const createCheckoutSession = async (req, res) => {
           },
           unit_amount: amount,
         },
+        quantity: product.quantity,
       };
     });
 
@@ -40,33 +41,37 @@ export const createCheckoutSession = async (req, res) => {
           (totalAmount * coupon.discountPercentage) / 100
         );
       }
-
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card", "amazon_pay"],
-        line_items: lineItems,
-        mode: "payment",
-        success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
-        discounts: coupon
-          ? [
-              {
-                coupon: await createStripeCoupon(coupon?.discountPercentage),
-              },
-            ]
-          : [],
-        metadata: {
-          userId: req.user._id.toString(),
-          couponCode: couponCode ?? "",
-          products: JSON.stringify(
-            products.map((p) => ({
-              id: p._id,
-              quantity: p.quantity,
-              price: p.price,
-            }))
-          ),
-        },
-      });
     }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL}/purchase-cancelled`,
+      billing_address_collection: "required", // Ensure billing details are collected
+      discounts: coupon
+        ? [
+            {
+              coupon: await createStripeCoupon(coupon?.discountPercentage),
+            },
+          ]
+        : [],
+      metadata: {
+        userId: req.user._id.toString(),
+        couponCode: couponCode ?? "",
+        products: JSON.stringify(
+          products.map((p) => ({
+            id: p._id,
+            quantity: p.quantity,
+            price: p.price,
+          }))
+        ),
+      },
+      shipping_address_collection: {
+        allowed_countries: ["IN", "US", "CA"], // Optional: If shipping is needed
+      },
+    });
 
     // create coupon amt 200+
     if (totalAmount >= 20000) {
@@ -75,7 +80,7 @@ export const createCheckoutSession = async (req, res) => {
 
     res.json({ id: session.id, amount: totalAmount / 100 });
   } catch (error) {
-    res.status(500).json({  error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -115,7 +120,7 @@ export const checkoutSuccess = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).json({  error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -129,6 +134,8 @@ const createStripeCoupon = async (discountPercentage) => {
 };
 
 const createNewCoupon = async (userId) => {
+  await Coupon.findOneAndDelete({ userId });
+
   const newCoupon = await Coupon.create({
     code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
     discountPercentage: 10,
