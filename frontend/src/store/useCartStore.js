@@ -74,18 +74,50 @@ export const useCartStore = create((set, get) => ({
 
   calculateTotals: () => {
     const { cart, coupon } = get();
-
-    const subTotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-
+  
+    // Ensure all cart items have valid price and quantity
+    const subTotal = cart.reduce((sum, item) => {
+      // Validate that price and quantity are valid numbers
+      const price = item.price && !isNaN(item.price) ? item.price : 0;
+      const quantity = item.quantity && !isNaN(item.quantity) ? item.quantity : 0;
+  
+      return sum + price * quantity;
+    }, 0);
+  
     let total = subTotal;
-
-    if (coupon) {
+  
+    if (coupon && coupon.discount && !isNaN(coupon.discount)) {
       const discount = subTotal * (coupon.discount / 100);
       total = subTotal - discount;
     }
-
+  
+    console.log("SubTotal:", subTotal);
+    console.log("Total after discount:", total);
+  
     set({ subTotal, total });
   },
+  
+  updateQuantity: async (productId, quantity) => {
+    if (quantity === 0) {
+      get().removeFromCart(productId);
+      return;
+    }
+  
+    // Ensure quantity is a valid number
+    if (isNaN(quantity) || quantity <= 0) {
+      console.log("Invalid quantity", quantity);
+      return;
+    }
+  
+    await axios.put(`/cart/${productId}`, { quantity });
+    set((prevState) => ({
+      cart: prevState.cart.map((item) =>
+        item._id === productId ? { ...item, quantity } : item
+      ),
+    }));
+    get().calculateTotals();
+  },
+  
 
   removeFromCart: async (productId) => {
     await axios.delete(`/cart`, { data: { productId } });
@@ -95,20 +127,6 @@ export const useCartStore = create((set, get) => ({
     get().calculateTotals();
   },
 
-  updateQuantity: async (productId, quantity) => {
-    if (quantity === 0) {
-      get().removeFromCart(productId);
-      return;
-    }
-
-    await axios.put(`/cart/${productId}`, { quantity });
-    set((prevState) => ({
-      cart: prevState.cart.map((item) =>
-        item._id === productId ? { ...item, quantity } : item
-      ),
-    }));
-    get().calculateTotals();
-  },
 
   clearCart: async () => {
     await axios.delete("/cart");

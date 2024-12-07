@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useCartStore } from "../store/useCartStore";
 import { MoveRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "../lib/axios";
+import { useUserStore } from "../store/useUserStore";
 
 const stripePromise = loadStripe(
   "pk_test_51QNRC8SIiFYM5l9GhrtAeQbuf0FVPfXifuo6y8Shy07gQeDb3ZFHVihpnMSk0EgoQP9fwO8L0syeP2ooJCB37frA000Pu5xGwr"
@@ -12,27 +13,66 @@ const stripePromise = loadStripe(
 
 const OrderSummary = () => {
   const { total, subTotal, coupon, isCouponApplied, cart } = useCartStore();
-
+  const {user} = useUserStore();
   const savings = subTotal - total;
   const formattedSubtotal = subTotal.toFixed(2);
   const formattedTotal = total.toFixed(2);
   const formattedSavings = savings.toFixed(2);
-
+  const [loading, setLoading] = useState(false);
   const handlePayment = async () => {
-    const stripe = await stripePromise;
     const response = await axios.post("/payments/create-checkout-session", {
-      products: cart,
+      products: cart,  // cart contains product data
       couponCode: coupon ? coupon.code : null,
     });
-
+  
     const session = response.data.id;
-    const result = await stripe.redirectToCheckout({ sessionId: session });
-
-    if (result.error) {
-      console.log(result.error.message);
-    }
+    const sessionMetadata = response.data.sessionMetadata;
+    const razorpayKeyId = response.data.key_id;
+  
+    const options = {
+      key: razorpayKeyId,
+      amount: response.data.amount * 100,  // amount in paise
+      currency: "INR",
+      name: "Your Company Name",
+      description: "Purchase Description",
+      image: "logo.png",  // Optional: Company logo
+      order_id: session,  // Razorpay order ID
+      notes: sessionMetadata,  // Send session metadata to track products, coupon, etc.
+      handler: function (response) {
+        // Handle success
+        const paymentDetails = {
+          razorpayOrderId: session,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpaySignature: response.razorpay_signature,
+          sessionMetadata: sessionMetadata,
+        };
+  
+        // Send payment details to server
+        axios.post("/payments/checkout-success", paymentDetails)
+          .then((result) => {
+            alert("Payment successful! Order placed.");
+            window.location.href = "/purchase-success?id=" + result.data.orderId;
+          })
+          .catch((error) => {
+            alert("Payment verification failed. Please try again.");
+          });
+      },
+      prefill: {
+        name: user.name,
+        email: user.email,
+        contact: user.contact,
+      },
+      theme: {
+        color: "#f5b300",
+      },
+    };
+  
+    const razorpay = new Razorpay(options);
+    razorpay.open();
   };
+  
 
+  
   return (
     <motion.div
       className="space-y-4 rounded-lg border border-[#4d3900] bg-white p-4 shadow-sm sm:p-6"
@@ -74,7 +114,7 @@ const OrderSummary = () => {
           <dl className="flex items-center justify-between gap-4 border-t border-[#4d3900] pt-2">
             <dt className="text-base font-bold text-[#4d3900]">Total</dt>
             <dd className="text-base font-bold text-[#febe03]">
-              ${formattedTotal}
+              ${total}
             </dd>
           </dl>
         </div>

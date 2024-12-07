@@ -2,40 +2,16 @@ import { ArrowRight, CheckCircle, HandHeart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCartStore } from "../store/useCartStore";
-import axios from "../lib/axios";
+
 import Confetti from "react-confetti";
 
 const PurchaseSuccessPage = () => {
-  const [isProcessing, setIsProcessing] = useState(true);
   const { clearCart } = useCartStore();
-  const [error, setError] = useState(null);
+  const orderId = new URLSearchParams(window.location.search).get("id");
 
   useEffect(() => {
-    const handleCheckoutSuccess = async (sessionId) => {
-      try {
-        await axios.post("/payments/checkout-success", {
-          sessionId,
-        });
-        clearCart();
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsProcessing(false);
-      }
-    };
-
-    const sessionId = new URLSearchParams(window.location.search).get("session_id");
-    if (sessionId) {
-      handleCheckoutSuccess(sessionId);
-    } else {
-      setIsProcessing(false);
-      setError("No session ID found in the URL");
-    }
+    clearCart();
   }, [clearCart]);
-
-  if (isProcessing) return "Processing...";
-
-  if (error) return `Error: ${error}`;
 
   return (
     <div className="h-screen flex items-center justify-center px-4 bg-[#fef4d7]">
@@ -66,11 +42,13 @@ const PurchaseSuccessPage = () => {
           <div className="bg-[#fef4d7] rounded-lg p-4 mb-6 border border-[#febe03]">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-[#4d3900]">Order number</span>
-              <span className="text-sm font-semibold text-[#febe03]">#+</span>
+              <span className="text-sm font-semibold text-[#febe03]">#{orderId}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-[#4d3900]">Estimated delivery</span>
-              <span className="text-sm font-semibold text-[#febe03]">3-5 business days</span>
+              <span className="text-sm font-semibold text-[#febe03]">
+                3-5 business days
+              </span>
             </div>
           </div>
 

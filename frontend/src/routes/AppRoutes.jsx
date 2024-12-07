@@ -50,9 +50,9 @@ const AppRoutes = () => {
       <Route
         path="/purchase-success"
         element={
-          <ProtectedRoute>
+          <>
             <PurchaseSuccessPage />
-          </ProtectedRoute>
+          </>
         }
       />
       

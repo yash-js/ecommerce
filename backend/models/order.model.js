@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
+import mongooseSequence from "mongoose-sequence";
 
+const autoIncrement = mongooseSequence(mongoose);
 const orderSchema = new mongoose.Schema(
   {
     user: {
@@ -35,11 +37,28 @@ const orderSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    lineItems: [
+      {
+        name: { type: String },
+        description: { type: String },
+        amount: { type: Number },
+        quantity: { type: Number },
+        currency: { type: String },
+        image: { type: String },
+      },
+    ],
+    orderId: {
+      type: Number,
+      unique: true,
+    },
   },
+
   {
     timestamps: true,
   }
 );
+
+orderSchema.plugin(autoIncrement, { inc_field: "orderId" });
 
 const Order = mongoose.model("Order", orderSchema);
 

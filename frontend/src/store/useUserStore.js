@@ -80,26 +80,31 @@ axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    
+    // Check if the error is due to an unauthorized (401) request
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      try {
-        if (refreshPromise) {
-          await refreshPromise;
-          return axios(originalRequest);
-        }
-
-        // start a new refresh process
-        refreshPromise = useUserStore.getState().refreshToken();
+      // Wait for the current refresh process to complete if there's one in progress
+      if (refreshPromise) {
         await refreshPromise;
-        refreshPromise = null;
+        return axios(originalRequest); // Retry the original request
+      }
 
-        return axios(originalRequest);
+      try {
+        // Start a new refresh process
+        refreshPromise = useUserStore.getState().refreshToken();
+        await refreshPromise; // Wait for the refresh token to be issued
+        refreshPromise = null; // Clear the refresh promise after it resolves
+
+        return axios(originalRequest); // Retry the original request after refreshing the token
       } catch (refreshError) {
+        // If the refresh fails, log the user out
         useUserStore().getState().logout();
-        return Promise.reject(refreshError);
+        return Promise.reject(refreshError); // Reject the original request
       }
     }
-    return Promise.reject(error);
+
+    return Promise.reject(error); // For non-401 errors or any other failures
   }
 );

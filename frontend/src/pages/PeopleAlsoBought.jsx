@@ -19,15 +19,17 @@ const PeopleAlsoBought = () => {
         setLoading(false);
       }
     };
+    fetchRecommendations()
   }, []);
 
   return (
     <div className="mt-8">
-      <h3 className="text-2xl font-semibold text-emerald-400">
+      <h3 className="text-2xl font-semibold  text-[#febe03]">
         People Also Bought
       </h3>
 
-      <div className="mt-6 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div                   className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 flex-shrink-0 px-2"
+      >
         {
           recommendations.map((product) => (
             <ProductCard key={product._id} product={product} />
