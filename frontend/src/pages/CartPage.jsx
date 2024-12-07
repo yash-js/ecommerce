@@ -12,7 +12,7 @@ const Cart = () => {
   const { cart } = useCartStore();
 
   return (
-    <div className="py-8 md:py-16">
+    <div className="bg-[#fef4d7] min-h-screen py-8 md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
           <motion.div
@@ -52,6 +52,7 @@ const Cart = () => {
 
 export default Cart;
 
+
 const EmptyCartUI = () => (
   <motion.div
     className="flex flex-col items-center justify-center space-y-4 py-16"
@@ -59,13 +60,13 @@ const EmptyCartUI = () => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5 }}
   >
-    <ShoppingCart className="h-24 w-24 text-gray-300" />
-    <h3 className="text-2xl font-semibold ">Your cart is empty</h3>
-    <p className="text-gray-400">
-      Looks like you {"haven't"} added anything to your cart yet.
+    <ShoppingCart className="h-24 w-24 text-[#4d3900] opacity-30" />
+    <h3 className="text-2xl font-semibold text-[#4d3900]">Your cart is empty</h3>
+    <p className="text-[#4d3900] opacity-70">
+      Looks like you haven't added anything to your cart yet.
     </p>
     <Link
-      className="mt-4 rounded-md bg-emerald-500 px-6 py-2 text-white transition-colors hover:bg-emerald-600"
+      className="mt-4 rounded-md bg-[#febe03] px-6 py-2 text-[#4d3900] transition-colors hover:bg-[#ffd440]"
       to="/"
     >
       Start Shopping

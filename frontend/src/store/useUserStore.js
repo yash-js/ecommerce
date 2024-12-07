@@ -21,6 +21,8 @@ export const useUserStore = create((set, get) => ({
         email,
         password,
       });
+      if (!response.data?.user) return toast.error("Something went wrong");
+
       set({ user: response.data?.user, loading: false });
       toast.success("Account created successfully");
     } catch (error) {
@@ -35,6 +37,7 @@ export const useUserStore = create((set, get) => ({
         email,
         password,
       });
+
       set({ user: response?.data?.user, loading: false });
     } catch (error) {
       set({ loading: false });
