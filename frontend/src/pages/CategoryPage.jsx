@@ -6,11 +6,11 @@ import ProductCard from "../components/ProductCard";
 
 const Category = () => {
   const { category } = useParams();
-  const { products, fetchProductByCategory } = useProductStore();
+  const { products, fetchProductByCategory, currentCategory } = useProductStore();
 
   useEffect(() => {
     fetchProductByCategory(category);
-  }, [category, fetchProductByCategory]);
+  }, [category, fetchProductByCategory, currentCategory]);
 
   return (
     <div className="relative min-h-screen bg-[#fef4d7] text-[#4d3900] overflow-hidden">
@@ -22,7 +22,7 @@ const Category = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {category.charAt(0).toUpperCase() + category.slice(1)}
+          {currentCategory}
         </motion.h1>
 
         <motion.div

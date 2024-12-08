@@ -1,25 +1,26 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import HomePage from '../pages/HomePage';
-import Login from '../pages/LoginPage';
-import Signup from '../pages/SignupPage';
-import Dashboard from '../pages/Dashboard';
-import Category from '../pages/CategoryPage';
-import Cart from '../pages/CartPage';
-import PurchaseSuccessPage from '../pages/PurchaseSuccess';
-import PurchaseCancelPage from '../pages/PurchaseCancelPage';
-import ProtectedRoute from './ProtectedRoute';
-import AuthRoute from './AuthRoute';
-import { useUserStore } from '../store/useUserStore';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import HomePage from "../pages/HomePage";
+import Login from "../pages/LoginPage";
+import Signup from "../pages/SignupPage";
+import Dashboard from "../pages/Dashboard";
+import Category from "../pages/CategoryPage";
+import Cart from "../pages/CartPage";
+import PurchaseSuccessPage from "../pages/PurchaseSuccess";
+import PurchaseCancelPage from "../pages/PurchaseCancelPage";
+import ProtectedRoute from "./ProtectedRoute";
+import AuthRoute from "./AuthRoute";
+import { useUserStore } from "../store/useUserStore";
+import { ProductDetails } from "../components/Product/ProductDetails";
 
 const AppRoutes = () => {
   const { user } = useUserStore();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === "admin";
 
   return (
     <Routes>
       <Route path="/" element={isAdmin ? <Dashboard /> : <HomePage />} />
-      
+
       <Route
         path="/login"
         element={
@@ -28,7 +29,7 @@ const AppRoutes = () => {
           </AuthRoute>
         }
       />
-      
+
       <Route
         path="/signup"
         element={
@@ -37,7 +38,7 @@ const AppRoutes = () => {
           </AuthRoute>
         }
       />
-      
+
       <Route
         path="/cart"
         element={
@@ -46,7 +47,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       <Route
         path="/purchase-success"
         element={
@@ -55,7 +56,9 @@ const AppRoutes = () => {
           </>
         }
       />
-      
+
+      <Route path="/product/:productId" element={<ProductDetails />} />
+
       <Route
         path="/purchase-cancelled"
         element={
@@ -64,9 +67,9 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       <Route path="/category/:category" element={<Category />} />
-      
+
       <Route
         path="/dashboard"
         element={

@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import { useUserStore } from '../store/useUserStore';
+import { Footer } from './footer/Footer';
 
 const Layout = ({ children }) => {
   const { user } = useUserStore();
@@ -16,6 +17,7 @@ const Layout = ({ children }) => {
       <div className={`relative z-50 ${isAdmin ? "" : "pt-10"}`}>
         <Navbar />
         {children}
+        <Footer/>
       </div>
     </div>
   );

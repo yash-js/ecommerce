@@ -1,6 +1,6 @@
 import { ArrowRight, CheckCircle, HandHeart } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useCartStore } from "../store/useCartStore";
 
 import Confetti from "react-confetti";
@@ -10,8 +10,11 @@ const PurchaseSuccessPage = () => {
   const orderId = new URLSearchParams(window.location.search).get("id");
 
   useEffect(() => {
+
     clearCart();
   }, [clearCart]);
+
+  if(!orderId) return <Navigate to="/" />
 
   return (
     <div className="h-screen flex items-center justify-center px-4 bg-[#fef4d7]">

@@ -6,7 +6,7 @@ import {
   ShoppingBasket,
 } from "lucide-react";
 import AnalyticsTab from "../components/AnalyticsTab";
-import ProductsList from "../components/ProductsList";
+import ProductsList from "../components/ProductList";
 import { useProductStore } from "../store/useProductStore";
 import Categories from "../components/Categories";
 import Orders from "../components/Orders";

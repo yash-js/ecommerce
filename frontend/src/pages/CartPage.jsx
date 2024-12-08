@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useCartStore } from "../store/useCartStore";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
@@ -9,7 +9,11 @@ import OrderSummary from "../components/OrderSummary";
 import GiftCouponCard from "../components/GiftCouponCard";
 
 const Cart = () => {
-  const { cart } = useCartStore();
+  const { cart, getCartItems } = useCartStore();
+
+  useEffect(()  => {
+    getCartItems()
+  }, [getCartItems])
 
   return (
     <div className="bg-[#fef4d7] min-h-screen py-8 md:py-16">

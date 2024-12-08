@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "../lib/axios";
 import { useUserStore } from "../store/useUserStore";
+import { formatINR } from "../lib/utils";
 
 const stripePromise = loadStripe(
   "pk_test_51QNRC8SIiFYM5l9GhrtAeQbuf0FVPfXifuo6y8Shy07gQeDb3ZFHVihpnMSk0EgoQP9fwO8L0syeP2ooJCB37frA000Pu5xGwr"
@@ -114,7 +115,7 @@ const OrderSummary = () => {
           <dl className="flex items-center justify-between gap-4 border-t border-[#4d3900] pt-2">
             <dt className="text-base font-bold text-[#4d3900]">Total</dt>
             <dd className="text-base font-bold text-[#febe03]">
-              ${total}
+              {formatINR(total)}
             </dd>
           </dl>
         </div>

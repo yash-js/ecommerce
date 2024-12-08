@@ -7,14 +7,14 @@ import { useInitialLoad } from "./store/useInitialLoad";
 
 const App = () => {
   const { checkingAuth } = useInitialLoad();
-
+  
   if (checkingAuth) return <LoadingSpinner />;
 
   return (
     <Layout>
       <AppRoutes />
       <Toaster
-        toastOptions={{ style: { background: "#febe03", color: "#4d3900" } }}
+        toastOptions={{ style: { background: "#febe03", color: "#f1f1ef" } }}
       />
     </Layout>
   );

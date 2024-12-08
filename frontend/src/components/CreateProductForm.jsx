@@ -3,18 +3,8 @@ import { motion } from "framer-motion";
 import { PlusCircle, Upload, Loader, Cross, CrossIcon, X } from "lucide-react";
 import { useProductStore } from "../store/useProductStore";
 
-const categories = [
-  "jeans",
-  "t-shirts",
-  "shoes",
-  "glasses",
-  "jackets",
-  "suits",
-  "bags",
-];
-
 const ProductCreateForm = ({ onCancel = () => {} }) => {
-  const { createProduct, loading } = useProductStore();
+  const { createProduct, loading , categories} = useProductStore();
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -34,6 +24,7 @@ const ProductCreateForm = ({ onCancel = () => {} }) => {
         category: "",
         image: "",
       });
+      onCancel()
     } catch (error) {
       console.log(error);
     }
@@ -160,8 +151,9 @@ const ProductCreateForm = ({ onCancel = () => {} }) => {
           >
             <option value="">Select a category</option>
             {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
+              <option key={category._id} value={category._id}>
+                {category.name}
+                {console.log(category)}
               </option>
             ))}
           </select>
